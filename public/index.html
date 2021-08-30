@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket Test</title>
+</head>
+<style>
+  div{
+    border:1px soild gray;
+  }
+  #messages-div{
+    border: 1px solid red;;
+    height: 400px;
+    width: 600px;
+  }
+  #messages{
+    overflow: scroll;
+  }
+  #status{
+    width: 400px;
+    position: absolute;
+    top:20px;
+    right: 20px;
+    background-color: black;
+    color:white;
+    padding: 20px;
+    display: none;
+  }
+</style>
+<body>
+
+  UserName: <input type="text" id="user-name" style="text-align:center; outline: none;"/> 
+  <div id="messages-div">
+    <h3 style="text-align:center"> MESSAGES </h3>
+    <div id="messages" ></div>
+  </div>
+  <div id="buttons">
+    <div>
+      <input type="text" name="" id="room-name">
+      <button id="create-button">Create</button>
+    </div>
+    <div>
+      <input type="text" name="" id="join-name">
+      <button id="join-button">Join</button>
+    </div>
+  </div>
+  <div>
+    <button id="leave-button">Leave Current Room</button>
+  </div>
+  <div>
+    SendTo: <input type="text" name="" id="to-name"> 
+  </div>
+  <div>
+    <textarea id="my-message" cols=70 rows=10></textarea>
+    <button id="send-button">Send</button>
+  </div>
+  <div id="status">hello</div>
+</body>
+<script src = "/socket.io/socket.io.js" ></script>
+<script>
+  var username = document.getElementById('user-name')
+  var toname = document.getElementById('to-name')
+  var roomName = document.getElementById('room-name')
+  var joinname = document.getElementById('join-name')
+  var create = document.getElementById('create-button')
+  var join = document.getElementById('join-button')
+  var leave = document.getElementById('leave-button')
+  var send = document.getElementById('send-button')
+  var messages = document.getElementById('messages')
+  var mymsg = document.getElementById('my-message')
+  var statusbox = document.getElementById('status')
+  const socket = io("http://localhost:8080");
+  send.onclick=evt=>{
+    socket.emit('send-msg',{username:username.value, msg:mymsg.value, to:toname.value});
+    mymsg.value='';
+
+  }
+  mymsg.onkeyup=evt=>{
+    if(evt.keyCode==13){
+      socket.emit('send-msg',{username:username.value, msg:mymsg.value, to:toname.value});
+    mymsg.value='';
+    }
+  }
+  create.onclick=()=>socket.emit('create-room',{roomName:roomName.value})
+  join.onclick=()=>socket.emit('join-room',{roomName:joinname.value})
+  username.onblur=evt=>socket.emit('setname',{username:username.value});
+
+  function showStatus({status}){
+    statusbox.innerText = status;
+    statusbox.style.display='block';
+    
+    setTimeout(() => {
+      statusbox.style.display='none';
+    }, 4000);
+  }
+  socket.on('populate',(data)=>{
+    var div = document.createElement("div")
+    div.innerText = data.username+ "  =>  "+ data.msg;
+    messages.appendChild(div);
+  })
+
+  socket.on('gotAllMessages',(data)=>{
+    messages.innerHTML='';
+    data.messages.forEach(msg => {
+      var div = document.createElement("div")
+      div.innerText = msg;
+      messages.appendChild(div);
+    });
+    showStatus(data)
+  })
+
+  socket.on('status',data=>showStatus(data))
+
+
+</script>
+</html>
