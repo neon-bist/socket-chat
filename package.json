@@ -1,7 +1,7 @@
 {
   "name": "basic",
   "version": "1.0.0",
-  "main": "express.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --watch .env --watch src --exec babel-node src --source-maps",
@@ -14,6 +14,9 @@
     "@babel/core": "^7.14.6",
     "@babel/node": "^7.14.7",
     "nodemon": "^2.0.7"
+  },
+  "engines": {
+    "node": "14.16.1"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
