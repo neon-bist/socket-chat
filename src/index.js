@@ -8,8 +8,8 @@ const port =8000;
 const users={};
 const rooms={};
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname,"../public")))
 app.use("/", router)
 server.listen(port, ()=>console.log("Listening on "+port) )

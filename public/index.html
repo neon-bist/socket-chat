@@ -71,7 +71,7 @@
   var messages = document.getElementById('messages')
   var mymsg = document.getElementById('my-message')
   var statusbox = document.getElementById('status')
-  const socket = io("http://localhost:8000");
+  const socket = io();
   send.onclick=evt=>{
     socket.emit('send-msg',{username:username.value, msg:mymsg.value, to:toname.value});
     mymsg.value='';
