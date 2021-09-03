@@ -4,9 +4,10 @@ const router = express.Router();
 const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server)
-const port =8800;
+const port =8000;
 const users={};
 const rooms={};
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname,"../public")))
