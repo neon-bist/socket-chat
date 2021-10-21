@@ -28,10 +28,14 @@
     padding: 20px;
     display: none;
   }
+  .d-none{
+    display: none;
+  }
 </style>
 <body>
 
   UserName: <input type="text" id="user-name" style="text-align:center; outline: none;"/> 
+  <div id="container" class="d-none">
   <div id="messages-div">
     <h3 style="text-align:center"> MESSAGES </h3>
     <div id="messages" ></div>
@@ -56,7 +60,8 @@
     <textarea id="my-message" cols=70 rows=10></textarea>
     <button id="send-button">Send</button>
   </div>
-  <div id="status">hello</div>
+  <div id="status"></div>
+  </div>
 </body>
 <script src = "/socket.io/socket.io.js" ></script>
 <script>
@@ -71,6 +76,7 @@
   var messages = document.getElementById('messages')
   var mymsg = document.getElementById('my-message')
   var statusbox = document.getElementById('status')
+  var container = document.getElementById('container')
   const socket = io();
   send.onclick=evt=>{
     socket.emit('send-msg',{username:username.value, msg:mymsg.value, to:toname.value});
@@ -85,7 +91,14 @@
   }
   create.onclick=()=>socket.emit('create-room',{roomName:roomName.value})
   join.onclick=()=>socket.emit('join-room',{roomName:joinname.value})
-  username.onblur=evt=>socket.emit('setname',{username:username.value});
+  username.onblur=evt=>{
+    if(username.value==""){
+      container.classList.add("d-none")
+    }else{
+      container.classList.remove("d-none")
+      socket.emit('setname',{username:username.value});
+    }
+  }
 
   function showStatus({status}){
     statusbox.innerText = status;
